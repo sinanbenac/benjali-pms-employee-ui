@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee KRA Update</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-main: #111827;
+            --text-muted: #4B5563;
+            --border-color: #E5E7EB;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header h1 {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(229, 231, 235, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-3 { grid-template-columns: repeat(3, 1fr); }
+            .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            outline: none;
+            background-color: #fff;
+            color: var(--text-main);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        .form-control[readonly], .form-control:disabled {
+            background-color: #F9FAFB;
+            color: var(--text-muted);
+            cursor: not-allowed;
+            border-color: #E5E7EB;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-height: 42px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2), 0 2px 4px -1px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(79, 70, 229, 0.25), 0 4px 6px -1px rgba(79, 70, 229, 0.15);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .btn-block {
+            width: 100%;
+        }
+
+        .load-action {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px; /* Ensure table doesn't squish too much */
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #F9FAFB;
+            font-weight: 600;
+            color: var(--text-main);
+            position: sticky;
+            top: 0;
+        }
+
+        tbody tr:hover {
+            background-color: #F9FAFB;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background-color: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .alert-error {
+            background-color: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        .form-control.status-complete { background-color: #ECFDF5; color: #065F46; border-color: #A7F3D0; }
+        .form-control.status-ongoing { background-color: #EFF6FF; color: #1E40AF; border-color: #BFDBFE; }
+        .form-control.status-onhold { background-color: #FFF7ED; color: #9A3412; border-color: #FED7AA; }
+        .form-control.status-notstarted { background-color: #F3F4F6; color: #4B5563; border-color: #E5E7EB; }
+
+        .kra-input {
+            min-width: 140px;
+        }
+        
+        .kra-comment {
+            min-width: 180px;
+        }
+
+        .submit-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* SVG Icons */
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        /* Responsive Mobile Table */
+        @media (max-width: 768px) {
+            body { padding: 1rem 0.5rem; }
+            .card { padding: 1rem; }
+            
+            .table-responsive {
+                border: none;
+                background: transparent;
+            }
+            table {
+                min-width: 100%;
+            }
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                display: none;
+            }
+            tbody tr {
+                margin-bottom: 1.5rem;
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                background-color: var(--card-bg);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+                padding: 1.25rem;
+            }
+            tbody tr:hover {
+                background-color: var(--card-bg);
+            }
+            td {
+                border-bottom: 1px solid var(--border-color);
+                padding: 0.75rem 0;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+                white-space: normal;
+            }
+            td:last-child {
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            td:first-child {
+                padding-top: 0;
+            }
+            td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: var(--text-main);
+                font-size: 0.75rem;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+            .kra-input, .kra-comment {
+                width: 100%;
+                min-width: 100%;
+            }
+            .submit-section {
+                justify-content: stretch;
+            }
+            .btn-primary {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Employee KRA Update</h1>
+        <p>Review and update your Key Result Areas (KRAs)</p>
+    </div>
+
+    <!-- Alert Notification -->
+    <div id="notificationAlert" class="alert">
+        <svg id="alertIcon" class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <!-- Icon path will be injected via JS -->
+        </svg>
+        <span id="alertMessage"></span>
+    </div>
+
+    <!-- Section 1: Login / Load -->
+    <div class="card" id="loginSection">
+        <div class="card-title">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+            </svg>
+            Authentication
+        </div>
+        <div class="grid grid-3">
+            <div class="form-group">
+                <label for="mobileNumber">Mobile Number <span style="color:red">*</span></label>
+                <input type="tel" id="mobileNumber" class="form-control" placeholder="Enter 10-digit number" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="passcode">Passcode <span style="color:red">*</span></label>
+                <input type="password" id="passcode" class="form-control" placeholder="Enter passcode" autocomplete="off">
+            </div>
+            <div class="form-group load-action">
+                <button type="button" id="btnLoad" class="btn btn-primary btn-block">Load Details</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 2: Employee Details (Initially Hidden) -->
+    <div class="card hidden" id="employeeDetailsSection">
+        <div class="card-title">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            Employee Information
+        </div>
+        <div class="grid grid-3">
+            <div class="form-group">
+                <label>Employee Name</label>
+                <input type="text" id="empName" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label>Employee ID</label>
+                <input type="text" id="empId" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label>Reporting Manager</label>
+                <input type="text" id="empManager" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label>Designation</label>
+                <input type="text" id="empDesignation" class="form-control" readonly>
+            </div>
+            <div class="form-group">
+                <label>Department</label>
+                <input type="text" id="empDepartment" class="form-control" readonly>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section 3: KRA Table (Initially Hidden) -->
+    <div class="card hidden" id="kraSection">
+        <div class="card-title">
+            <svg class="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+            Key Result Areas
+        </div>
+        <div class="table-responsive">
+            <table id="kraTable">
+                <thead>
+                    <tr>
+                        <th width="8%">ID</th>
+                        <th width="20%">KRA</th>
+                        <th width="25%">Objective</th>
+                        <th width="15%">Measurement</th>
+                        <th width="12%">Status</th>
+                        <th width="20%">Comment</th>
+                    </tr>
+                </thead>
+                <tbody id="kraTableBody">
+                    <!-- Rows will be injected here via JS -->
+                </tbody>
+            </table>
+        </div>
+        <div class="submit-section">
+            <button type="button" id="btnSubmit" class="btn btn-primary" style="padding: 0.75rem 2.5rem;">Submit Update</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- 1. API Configuration ---
+    const API_URL = "https://script.google.com/macros/s/AKfycbyfqN_8FKN_Fmbkz4sacy51_VRIGDFTWsVwyG-OhmIcqDw-ze23H636xMC-gcTc-MsQ/exec";
+
+    // --- 2. State & DOM Elements ---
+    let currentLoadedEmployee = null;
+
+    const elMobileNumber = document.getElementById('mobileNumber');
+    const elPasscode = document.getElementById('passcode');
+    const btnLoad = document.getElementById('btnLoad');
+    
+    // Employee Detail fields
+    const elEmpName = document.getElementById('empName');
+    const elEmpId = document.getElementById('empId');
+    const elEmpManager = document.getElementById('empManager');
+    const elEmpDesignation = document.getElementById('empDesignation');
+    const elEmpDepartment = document.getElementById('empDepartment');
+    
+    // Sections
+    const sectionEmployeeDetails = document.getElementById('employeeDetailsSection');
+    const sectionKra = document.getElementById('kraSection');
+    
+    // KRA Table
+    const kraTableBody = document.getElementById('kraTableBody');
+    const btnSubmit = document.getElementById('btnSubmit');
+
+    // Alert Notification
+    const alertDiv = document.getElementById('notificationAlert');
+    const alertMessage = document.getElementById('alertMessage');
+    const alertIcon = document.getElementById('alertIcon');
+
+    // Expected Status Options
+    const statusOptions = [
+        { value: "", label: "-- Select Status --" },
+        { value: "Completed", label: "Completed" },
+        { value: "Not Completed", label: "Not Completed" },
+        { value: "Ongoing", label: "Ongoing" },
+        { value: "Hold", label: "Hold" }
+    ];
+
+    // --- 3. Notification Utility ---
+    function showNotification(message, type) {
+        alertDiv.classList.remove('alert-success', 'alert-error', 'hidden');
+        alertDiv.style.display = 'flex';
+        alertMessage.textContent = message;
+        
+        if (type === 'success') {
+            alertDiv.classList.add('alert-success');
+            alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />`;
+        } else {
+            alertDiv.classList.add('alert-error');
+            alertIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />`;
+        }
+
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            alertDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    // --- 4. Load Action Logic ---
+    btnLoad.addEventListener('click', async () => {
+        const mobile = elMobileNumber.value.trim();
+        const passcode = elPasscode.value.trim();
+
+        // Basic Validation
+        if (!mobile || !passcode) {
+            showNotification("Please enter both Mobile Number and Passcode.", "error");
+            return;
+        }
+
+        btnLoad.textContent = "Loading...";
+        btnLoad.disabled = true;
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "fetch", mobile, passcode })
+            });
+            const result = await response.json();
+
+            if (result.status === "success") {
+                const employee = result.employee;
+                
+                // Keep reference of loaded user (store mobile & passcode for auth on submit)
+                currentLoadedEmployee = {
+                    ...employee,
+                    mobile: mobile,
+                    passcode: passcode
+                };
+
+                // Auto-fill Employee Details
+                elEmpName.value = employee.employee_name;
+                elEmpId.value = employee.employee_id;
+                elEmpManager.value = employee.reporting_manager;
+                elEmpDesignation.value = employee.designation;
+                elEmpDepartment.value = employee.department;
+
+                // Load KRAs
+                const wasAlreadySubmitted = loadKras(result.kras);
+
+                // Show Sections
+                sectionEmployeeDetails.classList.remove('hidden');
+                sectionKra.classList.remove('hidden');
+                
+                if (wasAlreadySubmitted) {
+                    showNotification("Details loaded. KRAs already updated for today.", "success");
+                } else {
+                    showNotification(result.message || "Details loaded successfully.", "success");
+                }
+            } else {
+                showNotification(result.message || "Invalid credentials.", "error");
+                resetForm();
+            }
+        } catch (error) {
+            showNotification("Network error while connecting to the server.", "error");
+            resetForm();
+        } finally {
+            btnLoad.textContent = "Load Details";
+            btnLoad.disabled = false;
+        }
+    });
+
+    // --- 5. Generate KRA Table Rows ---
+    function loadKras(kras) {
+        // Clear existing rows
+        kraTableBody.innerHTML = '';
+        
+        if (!kras || kras.length === 0) {
+            kraTableBody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No KRAs found for this employee.</td></tr>`;
+            btnSubmit.disabled = false; return false;
+        }
+
+        let alreadySubmittedToday = false;
+        const todayStr = new Date().toDateString();
+
+        // Check if submitted today
+        kras.forEach(kra => {
+            if (kra.submitted_date) {
+                // Safely handle both ISO formats and GMT formats
+                const subDate = new Date(kra.submitted_date).toDateString();
+                if (subDate === todayStr) {
+                    alreadySubmittedToday = true;
+                }
+            }
+        });
+
+        // Build Rows
+        kras.forEach(kra => {
+            const tr = document.createElement('tr');
+            tr.dataset.kraRowId = kra.kra_row_id; // Added row ID support from API
+            tr.dataset.kraId = kra.kra_id; // Store ID for reference during submit
+            
+            // Generate options HTML & pre-select if status exists
+            const optionsHtml = statusOptions.map(opt => {
+                const isSelected = (kra.status === opt.value) ? 'selected' : '';
+                return `<option value="${opt.value}" ${isSelected}>${opt.label}</option>`;
+            }).join('');
+
+            const commentVal = kra.comment || '';
+            const disableElements = alreadySubmittedToday ? 'disabled' : '';
+
+            tr.innerHTML = `
+                <td data-label="KRA ID"><strong>${kra.kra_id}</strong></td>
+                <td data-label="KRA Name">${kra.kra}</td>
+                <td data-label="Objective" style="white-space: normal;">${kra.objective}</td>
+                <td data-label="Measurement">${kra.measurement}</td>
+                <td data-label="Status">
+                    <select class="form-control kra-input kra-status" onchange="updateStatusColor(this)" ${disableElements}>
+                        ${optionsHtml}
+                    </select>
+                </td>
+                <td data-label="Comment">
+                    <input type="text" class="form-control kra-input kra-comment" placeholder="Add comments..." value="${commentVal}" ${disableElements}>
+                </td>
+            `;
+            kraTableBody.appendChild(tr);
+        });
+
+        // Initialize colors for newly added select tags
+        document.querySelectorAll('.kra-status').forEach(select => {
+            updateStatusColor(select);
+        });
+
+        // Lock submit button
+        if (alreadySubmittedToday) {
+            btnSubmit.disabled = true;
+            btnSubmit.textContent = "Already Submitted Today";
+            btnSubmit.style.backgroundColor = "#9CA3AF"; // Gray out
+            btnSubmit.style.boxShadow = "none";
+        } else {
+            btnSubmit.disabled = false;
+            btnSubmit.textContent = "Submit Update";
+            btnSubmit.style.backgroundColor = ""; 
+            btnSubmit.style.boxShadow = "";
+        }
+
+        return alreadySubmittedToday;
+    }
+
+    function updateStatusColor(selectElement) {
+        selectElement.classList.remove('status-complete', 'status-ongoing', 'status-onhold', 'status-notstarted');
+        const val = selectElement.value;
+        if (val === 'Completed') selectElement.classList.add('status-complete');
+        else if (val === 'Ongoing') selectElement.classList.add('status-ongoing');
+        else if (val === 'Hold') selectElement.classList.add('status-onhold');
+        else if (val === 'Not Completed') selectElement.classList.add('status-notstarted');
+    }
+
+    // --- 6. Form Reset Utility ---
+    function resetForm() {
+        currentLoadedEmployee = null;
+        sectionEmployeeDetails.classList.add('hidden');
+        sectionKra.classList.add('hidden');
+        
+        elEmpName.value = '';
+        elEmpId.value = '';
+        elEmpManager.value = '';
+        elEmpDesignation.value = '';
+        elEmpDepartment.value = '';
+        kraTableBody.innerHTML = '';
+
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "Submit Update";
+        btnSubmit.style.backgroundColor = ""; 
+        btnSubmit.style.boxShadow = "";
+    }
+
+    // --- 7. Submit Action Logic ---
+    btnSubmit.addEventListener('click', async () => {
+        // Validate loaded employee
+        if (!currentLoadedEmployee) {
+            showNotification("No employee data loaded. Please login first.", "error");
+            return;
+        }
+
+        const rows = kraTableBody.querySelectorAll('tr');
+        if (rows.length === 0 || rows[0].innerText.includes("No KRAs found")) {
+            showNotification("No KRAs available to submit.", "error");
+            return;
+        }
+
+        const submittedKras = [];
+        let hasAtLeastOneStatus = false;
+
+        // Collect Data
+        rows.forEach(row => {
+            const kraRowId = row.dataset.kraRowId;
+            const kraId = row.dataset.kraId;
+            const statusNode = row.querySelector('.kra-status');
+            const commentNode = row.querySelector('.kra-comment');
+
+            if (kraId && statusNode && commentNode) {
+                const statusValue = statusNode.value;
+                const commentValue = commentNode.value.trim();
+
+                if (statusValue !== "") {
+                    hasAtLeastOneStatus = true;
+                }
+
+                submittedKras.push({
+                    kra_row_id: kraRowId,
+                    kra_id: kraId,
+                    status: statusValue,
+                    comment: commentValue
+                });
+            }
+        });
+
+        // Validation Requirement: Require at least one status before submit
+        if (!hasAtLeastOneStatus) {
+            showNotification("Please update Status for at least one KRA before submitting.", "error");
+            return;
+        }
+
+        btnSubmit.textContent = "Submitting...";
+        btnSubmit.disabled = true;
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({
+                    action: "update",
+                    mobile: currentLoadedEmployee.mobile,
+                    passcode: currentLoadedEmployee.passcode,
+                    employee_id: currentLoadedEmployee.employee_id,
+                    updates: submittedKras
+                })
+            });
+            const result = await response.json();
+
+            if (result.status === "success") {
+                showNotification(result.message || "KRA Updates saved successfully.", "success");
+            } else {
+                showNotification(result.message || "Failed to save updates.", "error");
+            }
+        } catch (error) {
+            showNotification("Network error while connecting to the server.", "error");
+        } finally {
+            btnSubmit.textContent = "Submit Update";
+            btnSubmit.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>
