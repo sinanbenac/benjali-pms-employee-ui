@@ -683,7 +683,7 @@
         }
 
         const submittedKras = [];
-        let hasAtLeastOneStatus = false;
+        let hasMissingStatus = false;
 
         // Collect Data
         rows.forEach(row => {
@@ -696,8 +696,8 @@
                 const statusValue = statusNode.value;
                 const commentValue = commentNode.value.trim();
 
-                if (statusValue !== "") {
-                    hasAtLeastOneStatus = true;
+                if (statusValue === "") {
+                    hasMissingStatus = true;
                 }
 
                 submittedKras.push({
@@ -709,9 +709,9 @@
             }
         });
 
-        // Validation Requirement: Require at least one status before submit
-        if (!hasAtLeastOneStatus) {
-            showNotification("Please update Status for at least one KRA before submitting.", "error");
+        // Validation Requirement: Require all status before submit
+        if (hasMissingStatus) {
+            showNotification("Please select a status for all KRAs before submitting.", "error");
             return;
         }
 
@@ -734,12 +734,17 @@
 
             if (result.status === "success") {
                 showNotification(result.message || "KRA Updates saved successfully.", "success");
+                btnSubmit.textContent = "Already Submitted Today";
+                btnSubmit.style.backgroundColor = "#9CA3AF"; // Gray out
+                btnSubmit.style.boxShadow = "none";
+                document.querySelectorAll('.kra-input').forEach(el => el.disabled = true);
             } else {
                 showNotification(result.message || "Failed to save updates.", "error");
+                btnSubmit.textContent = "Submit Update";
+                btnSubmit.disabled = false;
             }
         } catch (error) {
             showNotification("Network error while connecting to the server.", "error");
-        } finally {
             btnSubmit.textContent = "Submit Update";
             btnSubmit.disabled = false;
         }
